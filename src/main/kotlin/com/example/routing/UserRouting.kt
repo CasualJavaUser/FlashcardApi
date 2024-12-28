@@ -18,7 +18,6 @@ fun Application.configureUserRouting() {
                 User(
                     user.id,
                     user.login,
-                    user.email,
                     BCrypt.hashpw(user.password, BCrypt.gensalt())
                 )
             )

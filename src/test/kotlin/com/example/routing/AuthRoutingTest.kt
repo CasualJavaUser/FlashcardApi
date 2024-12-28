@@ -24,7 +24,7 @@ class AuthRoutingTest {
             configureDatabase()
             configureAuthRouting(JwtService(this))
         }
-        val response = login(User(1, "", "", "f"))
+        val response = login(User(1, "", "f"))
         assertEquals(response.status, HttpStatusCode.OK)
         val body = json.decodeFromString<AuthResponse>(response.body())
         assertTrue { body.accessToken.isNotEmpty() && body.refreshToken.isNotEmpty() }
@@ -36,7 +36,7 @@ class AuthRoutingTest {
             configureDatabase()
             configureAuthRouting(JwtService(this))
         }
-        val response = login(User(1, "a", "a", "a"))
+        val response = login(User(1, "a", "a"))
         assertEquals(response.status, HttpStatusCode.NotFound)
     }
 
@@ -46,7 +46,7 @@ class AuthRoutingTest {
             configureDatabase()
             configureAuthRouting(JwtService(this))
         }
-        val loginResponse = login(User(1, "", "", "f"))
+        val loginResponse = login(User(1, "", "f"))
         val token = json.decodeFromString<AuthResponse>(loginResponse.body()).refreshToken
         val response = client.post("/refresh") {
             contentType(ContentType.Application.Json)

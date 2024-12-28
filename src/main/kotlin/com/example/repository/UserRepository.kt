@@ -20,7 +20,6 @@ import java.time.temporal.ChronoUnit
 object UserRepository {
     object UserTable : LongIdTable("user") {
         val login = varchar("login", length = 255).uniqueIndex()
-        val email = varchar("email", length = 255).uniqueIndex()
         val password = varchar("password", length = 255)
         val dailyStreak = integer("daily_streak")
         val reviewStats = varchar("review_stats", 255)
@@ -33,7 +32,6 @@ object UserRepository {
             User(
                 it[id].value,
                 it[login],
-                it[email],
                 it[password]
             )
         }
@@ -42,7 +40,6 @@ object UserRepository {
     suspend fun create(user: User): Long = dbQuery {
         UserTable.insert {
             it[login] = user.login
-            it[email] = user.email
             it[password] = user.password
         }[UserTable.id].value
     }
@@ -68,7 +65,6 @@ object UserRepository {
     suspend fun update(user: User) = dbQuery {
         UserTable.update({ UserTable.id eq user.id }) {
             it[login] = user.login
-            it[email] = user.email
             it[password] = user.password
         }
     }
