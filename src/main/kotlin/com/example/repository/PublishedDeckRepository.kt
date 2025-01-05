@@ -28,8 +28,8 @@ object PublishedDeckRepository {
     }
 
     object AddedDeckTable : Table("added_deck") {
-        val userId = long("user_id")
-        val deckId = long("deck_id")
+        val userId = long("user_id").references(UserRepository.UserTable.id)
+        val deckId = long("deck_id").references(PublishedDeckTable.id)
 
         override val primaryKey = PrimaryKey(userId, deckId)
 
@@ -90,6 +90,7 @@ object PublishedDeckRepository {
     }
 
     suspend fun delete(id: Long) = dbQuery {
+        AddedDeckTable.deleteWhere { AddedDeckTable.deckId.eq(id) }
         PublishedDeckTable.deleteWhere { PublishedDeckTable.id.eq(id) }
     }
 }

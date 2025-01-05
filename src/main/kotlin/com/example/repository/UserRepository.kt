@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit
 
 object UserRepository {
     object UserTable : LongIdTable("user") {
-        val login = varchar("login", length = 255).uniqueIndex()
+        val login = varchar("login", length = 255)
         val password = varchar("password", length = 255)
         val dailyStreak = integer("daily_streak")
         val reviewStats = varchar("review_stats", 255)
