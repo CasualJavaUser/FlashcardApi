@@ -1,18 +1,21 @@
 package com.example
 
-import com.example.plugins.configureSecurity
 import com.example.repository.CardRepository
 import com.example.repository.PublishedDeckRepository
 import com.example.repository.StudiedDeckRepository
 import com.example.repository.UserRepository
 import com.example.routing.*
 import com.example.service.JwtService
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -75,4 +78,22 @@ fun configureDatabase() {
         driver = "org.mariadb.jdbc.Driver",
         password = "",
     )
+}
+
+fun Application.configureSecurity(jwtService: JwtService) {
+
+    authentication {
+        jwt("auth-jwt") {
+            realm = jwtService.realm
+            verifier(jwtService.jwtVerifier)
+
+            validate { credential ->
+                jwtService.validate(credential)
+            }
+
+            challenge { defaultScheme, realm ->
+                call.respond(HttpStatusCode.Unauthorized, "Token is not valid or has expired")
+            }
+        }
+    }
 }
